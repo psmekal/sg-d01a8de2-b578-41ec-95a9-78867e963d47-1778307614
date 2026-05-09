@@ -6,6 +6,7 @@ import { MultiviewGrid } from "@/components/MultiviewGrid";
 import { GraphicsControl } from "@/components/GraphicsControl";
 import { MediaPlayback } from "@/components/MediaPlayback";
 import { getVenueById } from "@/lib/venues";
+import { useScoreboard } from "@/contexts/ScoreboardContext";
 
 export default function HomePage() {
   const [activeVenueId, setActiveVenueId] = useState("1");
@@ -14,14 +15,8 @@ export default function HomePage() {
     localSponsors: false,
     tournamentLogo: false,
   });
-  const [scoreboard, setScoreboard] = useState({
-    teamA: "Domáci",
-    teamB: "Hostia",
-    scoreA: 0,
-    scoreB: 0,
-    period: 1,
-  });
   const [playingMedia, setPlayingMedia] = useState<string | null>(null);
+  const { scoreboard } = useScoreboard();
 
   const handleToggleGraphic = (key: "mainSponsor" | "localSponsors") => {
     setGraphics((prev) => ({ ...prev, [key]: !prev[key] }));
