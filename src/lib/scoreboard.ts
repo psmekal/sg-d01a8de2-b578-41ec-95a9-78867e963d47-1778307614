@@ -1,3 +1,5 @@
+import { useState, useEffect } from "react";
+
 // Adapted from handball-scoreboard-live with venue support
 export type Penalty = {
   id: string;
@@ -28,6 +30,8 @@ export type Scoreboard = {
   away_score: number;
   home_text_color: string;
   away_text_color: string;
+  home_logo: string | null;
+  away_logo: string | null;
   period: number;
   period_length_sec: number;
   clock_mode: "up" | "down";
@@ -42,6 +46,8 @@ export type Scoreboard = {
   away_penalties: Penalty[];
   updated_at: string;
 };
+
+export const CANVAS_MARGIN = "2rem";
 
 const STORAGE_KEY = "tournament_scoreboards";
 
@@ -76,6 +82,14 @@ export function updateScoreboard(venueId: string, updates: Partial<Scoreboard>) 
   window.dispatchEvent(new CustomEvent("scoreboard-update", { detail: { venueId, data: boards[venueId] } }));
 }
 
+export async function patchScoreboard(updates: Partial<Scoreboard>) {
+  const boards = getScoreboards();
+  const venueId = Object.keys(boards)[0];
+  if (venueId) {
+    updateScoreboard(venueId, updates);
+  }
+}
+
 function createDefaultScoreboard(venueId: string): Scoreboard {
   return {
     id: venueId,
@@ -90,6 +104,8 @@ function createDefaultScoreboard(venueId: string): Scoreboard {
     away_score: 0,
     home_text_color: "#ffffff",
     away_text_color: "#ffffff",
+    home_logo: null,
+    away_logo: null,
     period: 1,
     period_length_sec: 1800,
     clock_mode: "down",
@@ -140,9 +156,59 @@ export function resumePenalties(list: Penalty[], now = Date.now()): Penalty[] {
   });
 }
 
+export function penaltyRemaining(p: Penalty, clockRunning: boolean, now = Date.now()): number {
+  if (typeof p.base_sec !== "number") {
+    const elapsed = (now - new Date(p.startedAt).getTime()) / 1000;
+    return Math.max(0, p.duration - elapsed);
+  }
+  if (!clockRunning || !p.anchor) {
+    return Math.max(0, p.duration - p.base_sec);
+  }
+  const add = (now - new Date(p.anchor).getTime()) / 1000;
+  return Math.max(0, p.duration - (p.base_sec + add));
+}
+
 export function fmtClock(totalSec: number): string {
   const t = Math.max(0, Math.floor(totalSec));
   const m = Math.floor(t / 60);
   const s = t % 60;
   return `${m.toString().padStart(2, "0")}:${s.toString().padStart(2, "0")}`;
+}
+
+export function useScoreboard(venueId?: string): Scoreboard | null {
+  const [data, setData] = useState<Scoreboard | null>(null);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    
+    const loadScoreboard = () => {
+      const boards = getScoreboards();
+      const id = venueId || Object.keys(boards)[0];
+      if (id && boards[id]) {
+        setData(boards[id]);
+      }
+    };
+
+    loadScoreboard();
+
+    const handleUpdate = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (!venueId || customEvent.detail.venueId === venueId) {
+        setData(customEvent.detail.data);
+      }
+    };
+
+    window.addEventListener("scoreboard-update", handleUpdate);
+    return () => window.removeEventListener("scoreboard-update", handleUpdate);
+  }, [venueId]);
+
+  return data;
+}
+
+export function useTick(ms: number) {
+  const [, setTick] = useState(0);
+  useEffect(() => {
+    const i = setInterval(() => setTick((t) => t + 1), ms);
+    return () => clearInterval(i);
+  }, [ms]);
 }

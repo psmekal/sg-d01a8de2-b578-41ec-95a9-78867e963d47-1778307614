@@ -6,9 +6,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Minus, Play, Pause, RotateCcw, Users, Clock } from "lucide-react";
+import { Plus, Minus, Play, Pause, RotateCcw, Users, Clock, Eye, EyeOff, UserX } from "lucide-react";
 import { getVenues, type Venue } from "@/lib/venues";
-import { getScoreboardByVenue, updateScoreboard, computeClockSeconds, fmtClock, type Scoreboard } from "@/lib/scoreboard";
+import { getScoreboardByVenue, updateScoreboard, computeClockSeconds, fmtClock, pausePenalties, resumePenalties, type Scoreboard, type Penalty } from "@/lib/scoreboard";
+import ScoreboardOverlay from "@/components/Scoreboard";
 
 export default function ScoreboardPage() {
   const [venues, setVenues] = useState<Venue[]>([]);
@@ -28,6 +29,16 @@ export default function ScoreboardPage() {
     if (!selectedVenueId) return;
     const board = getScoreboardByVenue(selectedVenueId);
     setScoreboard(board);
+
+    const handleUpdate = (e: Event) => {
+      const customEvent = e as CustomEvent;
+      if (customEvent.detail.venueId === selectedVenueId) {
+        setScoreboard(customEvent.detail.data);
+      }
+    };
+
+    window.addEventListener("scoreboard-update", handleUpdate);
+    return () => window.removeEventListener("scoreboard-update", handleUpdate);
   }, [selectedVenueId]);
 
   useEffect(() => {
@@ -42,7 +53,6 @@ export default function ScoreboardPage() {
   const handleUpdate = (updates: Partial<Scoreboard>) => {
     if (!selectedVenueId) return;
     updateScoreboard(selectedVenueId, updates);
-    setScoreboard({ ...scoreboard!, ...updates });
   };
 
   const handleScoreChange = (team: "home" | "away", delta: number) => {
@@ -57,9 +67,20 @@ export default function ScoreboardPage() {
     const now = Date.now();
     if (scoreboard.clock_running) {
       const seconds = computeClockSeconds(scoreboard, now);
-      handleUpdate({ clock_running: false, clock_base_sec: seconds, clock_anchor: null });
+      handleUpdate({ 
+        clock_running: false, 
+        clock_base_sec: seconds, 
+        clock_anchor: null,
+        home_penalties: pausePenalties(scoreboard.home_penalties, now),
+        away_penalties: pausePenalties(scoreboard.away_penalties, now),
+      });
     } else {
-      handleUpdate({ clock_running: true, clock_anchor: new Date(now).toISOString() });
+      handleUpdate({ 
+        clock_running: true, 
+        clock_anchor: new Date(now).toISOString(),
+        home_penalties: resumePenalties(scoreboard.home_penalties, now),
+        away_penalties: resumePenalties(scoreboard.away_penalties, now),
+      });
     }
   };
 
@@ -75,6 +96,21 @@ export default function ScoreboardPage() {
   const handlePeriodChange = (delta: number) => {
     if (!scoreboard) return;
     handleUpdate({ period: Math.max(1, scoreboard.period + delta) });
+  };
+
+  const handleAddPenalty = (team: "home" | "away") => {
+    if (!scoreboard) return;
+    const key = team === "home" ? "home_penalties" : "away_penalties";
+    const now = new Date().toISOString();
+    const newPenalty: Penalty = {
+      id: `${Date.now()}`,
+      player: "",
+      duration: 120,
+      startedAt: now,
+      base_sec: 0,
+      anchor: scoreboard.clock_running ? now : null,
+    };
+    handleUpdate({ [key]: [...scoreboard[key], newPenalty] });
   };
 
   if (venues.length === 0) {
@@ -96,27 +132,40 @@ export default function ScoreboardPage() {
     <>
       <SEO title="Scoreboard Control - Tournament Video Hub" />
       <ControlRoomLayout>
-        <div className="max-w-6xl mx-auto space-y-6">
+        <div className="max-w-7xl mx-auto space-y-6">
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold font-heading text-foreground">Ovládanie skóre</h1>
               <p className="text-sm text-muted-foreground mt-1">Spravujte skóre pre zvolenú halu</p>
             </div>
-            <div className="w-64">
-              <Select value={selectedVenueId} onValueChange={setSelectedVenueId}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Vyberte halu" />
-                </SelectTrigger>
-                <SelectContent>
-                  {venues.map((venue) => (
-                    <SelectItem key={venue.id} value={venue.id}>
-                      {venue.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="flex items-center gap-4">
+              <div className="w-64">
+                <Select value={selectedVenueId} onValueChange={setSelectedVenueId}>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Vyberte halu" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {venues.map((venue) => (
+                      <SelectItem key={venue.id} value={venue.id}>
+                        {venue.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button
+                variant={scoreboard.visible ? "default" : "outline"}
+                size="icon"
+                onClick={() => handleUpdate({ visible: !scoreboard.visible })}
+              >
+                {scoreboard.visible ? <Eye className="w-4 h-4" /> : <EyeOff className="w-4 h-4" />}
+              </Button>
             </div>
           </div>
+
+          <Card className="relative aspect-video bg-black overflow-hidden">
+            <ScoreboardOverlay />
+          </Card>
 
           <div className="grid lg:grid-cols-2 gap-6">
             <Card className="p-6 bg-card border-border">
@@ -143,6 +192,14 @@ export default function ScoreboardPage() {
                   />
                 </div>
                 <div className="space-y-2">
+                  <Label>Farba</Label>
+                  <Input
+                    type="color"
+                    value={scoreboard.home_color}
+                    onChange={(e) => handleUpdate({ home_color: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
                   <Label>Skóre</Label>
                   <div className="flex items-center gap-2">
                     <Button onClick={() => handleScoreChange("home", -1)} variant="outline" size="icon">
@@ -157,6 +214,13 @@ export default function ScoreboardPage() {
                       <Plus className="w-4 h-4" />
                     </Button>
                   </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>Tresty ({scoreboard.home_penalties.length})</Label>
+                  <Button onClick={() => handleAddPenalty("home")} variant="outline" className="w-full">
+                    <UserX className="w-4 h-4 mr-2" />
+                    Pridať trest (2 min)
+                  </Button>
                 </div>
               </div>
             </Card>
@@ -185,6 +249,14 @@ export default function ScoreboardPage() {
                   />
                 </div>
                 <div className="space-y-2">
+                  <Label>Farba</Label>
+                  <Input
+                    type="color"
+                    value={scoreboard.away_color}
+                    onChange={(e) => handleUpdate({ away_color: e.target.value })}
+                  />
+                </div>
+                <div className="space-y-2">
                   <Label>Skóre</Label>
                   <div className="flex items-center gap-2">
                     <Button onClick={() => handleScoreChange("away", -1)} variant="outline" size="icon">
@@ -199,6 +271,13 @@ export default function ScoreboardPage() {
                       <Plus className="w-4 h-4" />
                     </Button>
                   </div>
+                </div>
+                <div className="space-y-2">
+                  <Label>Tresty ({scoreboard.away_penalties.length})</Label>
+                  <Button onClick={() => handleAddPenalty("away")} variant="outline" className="w-full">
+                    <UserX className="w-4 h-4 mr-2" />
+                    Pridať trest (2 min)
+                  </Button>
                 </div>
               </div>
             </Card>

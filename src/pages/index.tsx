@@ -26,15 +26,15 @@ export default function HomePage() {
   return (
     <>
       <SEO 
-        title="Production Dashboard - Tournament Video Hub"
-        description="Centrálna réžia pre správu video streamov z turnaja"
+        title="Režie - Tournament Video Hub"
+        description="Centrální režie pro správu video streamů z turnaje"
       />
       <ControlRoomLayout>
         <div className="space-y-6">
           <section>
             <h2 className="text-xl font-bold text-foreground mb-4">Program Out</h2>
             <ProgramMonitor 
-              venueName={`Venue ${activeVenueId}`}
+              venueName={`Hala ${activeVenueId}`}
               graphics={graphics}
               playingMedia={playingMedia}
             />

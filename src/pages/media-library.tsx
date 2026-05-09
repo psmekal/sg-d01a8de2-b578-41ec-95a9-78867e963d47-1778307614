@@ -1,160 +1,91 @@
 import { useState } from "react";
 import { SEO } from "@/components/SEO";
 import { ControlRoomLayout } from "@/components/ControlRoomLayout";
-import { MediaLibraryGrid } from "@/components/MediaLibraryGrid";
-import { MediaUploader } from "@/components/MediaUploader";
 import { Button } from "@/components/ui/button";
 import { Plus } from "lucide-react";
+import { MediaLibraryGrid } from "@/components/MediaLibraryGrid";
+import { MediaUploader } from "@/components/MediaUploader";
 
-export interface MediaAsset {
-  id: string;
-  name: string;
-  type: "video" | "image";
-  duration?: string;
-  tags: string[];
-  thumbnail: string;
-  uploadedAt: string;
-}
-
-const mockAssets: MediaAsset[] = [
-  {
-    id: "vid-1",
-    name: "Hlavný sponzor 30s",
-    type: "video",
-    duration: "00:30",
-    tags: ["reklama", "sponzor"],
-    thumbnail: "/placeholder-video.jpg",
-    uploadedAt: "2026-05-08T10:30:00Z",
-  },
-  {
-    id: "vid-2",
-    name: "Lokálna reklama",
-    type: "video",
-    duration: "00:15",
-    tags: ["reklama"],
-    thumbnail: "/placeholder-video.jpg",
-    uploadedAt: "2026-05-08T09:15:00Z",
-  },
-  {
-    id: "vid-3",
-    name: "Turnajové intro",
-    type: "video",
-    duration: "00:45",
-    tags: ["intro", "turnaj"],
-    thumbnail: "/placeholder-video.jpg",
-    uploadedAt: "2026-05-07T14:20:00Z",
-  },
-  {
-    id: "vid-4",
-    name: "Prestávková slučka",
-    type: "video",
-    duration: "02:00",
-    tags: ["loop", "prestávka"],
-    thumbnail: "/placeholder-video.jpg",
-    uploadedAt: "2026-05-06T16:45:00Z",
-  },
-  {
-    id: "img-1",
-    name: "Logo hlavného sponzora",
-    type: "image",
-    tags: ["logo", "sponzor"],
-    thumbnail: "/placeholder-logo.png",
-    uploadedAt: "2026-05-05T11:00:00Z",
-  },
-  {
-    id: "img-2",
-    name: "Turnajové logo",
-    type: "image",
-    tags: ["logo", "turnaj"],
-    thumbnail: "/placeholder-logo.png",
-    uploadedAt: "2026-05-05T11:05:00Z",
-  },
+const mockMediaItems = [
+  { id: "1", name: "Reklama A", type: "video" as const, duration: "0:30", tags: ["reklama"], url: "", thumbnail: "" },
+  { id: "2", name: "Turnajové intro", type: "video" as const, duration: "0:15", tags: ["turnaj", "intro"], url: "", thumbnail: "" },
+  { id: "3", name: "Hlavní sponzor logo", type: "image" as const, tags: ["logo", "sponzor"], url: "", thumbnail: "" },
+  { id: "4", name: "Reklama B", type: "video" as const, duration: "0:45", tags: ["reklama"], url: "", thumbnail: "" },
 ];
 
-export default function MediaLibrary() {
-  const [assets, setAssets] = useState<MediaAsset[]>(mockAssets);
+export default function MediaLibraryPage() {
   const [isUploadOpen, setIsUploadOpen] = useState(false);
-  const [filterType, setFilterType] = useState<"all" | "video" | "image">("all");
+  const [mediaItems, setMediaItems] = useState(mockMediaItems);
+  const [filterTag, setFilterTag] = useState<string | null>(null);
 
-  const handleUpload = (file: File, tags: string[]) => {
-    const newAsset: MediaAsset = {
-      id: `asset-${Date.now()}`,
-      name: file.name,
-      type: file.type.startsWith("video/") ? "video" : "image",
-      tags,
-      thumbnail: URL.createObjectURL(file),
-      uploadedAt: new Date().toISOString(),
-    };
-    setAssets([newAsset, ...assets]);
-    setIsUploadOpen(false);
+  const allTags = Array.from(new Set(mediaItems.flatMap(item => item.tags)));
+  const filteredItems = filterTag 
+    ? mediaItems.filter(item => item.tags.includes(filterTag))
+    : mediaItems;
+
+  const handleDelete = (id: string) => {
+    if (confirm("Opravdu chcete odstranit tuto položku?")) {
+      setMediaItems(prev => prev.filter(item => item.id !== id));
+    }
   };
-
-  const handleDelete = (assetId: string) => {
-    setAssets(assets.filter((a) => a.id !== assetId));
-  };
-
-  const filteredAssets = filterType === "all" 
-    ? assets 
-    : assets.filter((a) => a.type === filterType);
 
   return (
     <>
-      <SEO
-        title="Media Library - Tournament Video Hub"
-        description="Správa VOD obsahu a grafiky pre turnajové prenosy"
-      />
-      
+      <SEO title="Mediální knihovna - Tournament Video Hub" />
       <ControlRoomLayout>
-        <div className="space-y-6">
+        <div className="max-w-7xl mx-auto space-y-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-foreground mb-1">Media Library</h1>
-              <p className="text-sm text-muted-foreground">
-                Správa videí a grafiky pre live produkciu
+              <h1 className="text-3xl font-bold font-heading text-foreground">Mediální knihovna</h1>
+              <p className="text-sm text-muted-foreground mt-1">
+                Spravujte VOD obsah a statickou grafiku
               </p>
             </div>
-            <Button onClick={() => setIsUploadOpen(true)} className="gap-2">
-              <Plus className="w-4 h-4" />
-              Upload Media
+            <Button onClick={() => setIsUploadOpen(true)}>
+              <Plus className="w-4 h-4 mr-2" />
+              Nahrát média
             </Button>
           </div>
 
-          <div className="flex items-center gap-2">
+          <div className="flex gap-2 flex-wrap">
             <Button
+              variant={filterTag === null ? "default" : "outline"}
               size="sm"
-              variant={filterType === "all" ? "default" : "outline"}
-              onClick={() => setFilterType("all")}
+              onClick={() => setFilterTag(null)}
             >
-              Všetky ({assets.length})
+              Vše ({mediaItems.length})
             </Button>
-            <Button
-              size="sm"
-              variant={filterType === "video" ? "default" : "outline"}
-              onClick={() => setFilterType("video")}
-            >
-              Videá ({assets.filter((a) => a.type === "video").length})
-            </Button>
-            <Button
-              size="sm"
-              variant={filterType === "image" ? "default" : "outline"}
-              onClick={() => setFilterType("image")}
-            >
-              Grafika ({assets.filter((a) => a.type === "image").length})
-            </Button>
+            {allTags.map(tag => (
+              <Button
+                key={tag}
+                variant={filterTag === tag ? "default" : "outline"}
+                size="sm"
+                onClick={() => setFilterTag(tag)}
+              >
+                {tag} ({mediaItems.filter(i => i.tags.includes(tag)).length})
+              </Button>
+            ))}
           </div>
 
-          <MediaLibraryGrid
-            assets={filteredAssets}
+          <MediaLibraryGrid 
+            items={filteredItems}
             onDelete={handleDelete}
           />
-        </div>
 
-        {isUploadOpen && (
-          <MediaUploader
-            onUpload={handleUpload}
-            onClose={() => setIsUploadOpen(false)}
-          />
-        )}
+          {filteredItems.length === 0 && (
+            <div className="text-center py-12">
+              <p className="text-muted-foreground">
+                {filterTag ? `Žádná média s tagem "${filterTag}"` : "Žádná média"}
+              </p>
+            </div>
+          )}
+
+          {isUploadOpen && (
+            <MediaUploader 
+              onClose={() => setIsUploadOpen(false)}
+            />
+          )}
+        </div>
       </ControlRoomLayout>
     </>
   );

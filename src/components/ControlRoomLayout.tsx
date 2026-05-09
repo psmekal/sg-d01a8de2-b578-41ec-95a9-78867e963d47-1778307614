@@ -36,7 +36,7 @@ export function ControlRoomLayout({ children }: ControlRoomLayoutProps) {
                 className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
                 <Film className="w-4 h-4" />
-                <span>Médiá</span>
+                <span>Média</span>
               </Link>
             </nav>
           </div>
