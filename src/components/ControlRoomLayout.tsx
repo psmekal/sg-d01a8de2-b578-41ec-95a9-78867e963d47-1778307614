@@ -1,6 +1,6 @@
 import { ReactNode } from "react";
 import Link from "next/link";
-import { Film } from "lucide-react";
+import { Film, MapPin, Activity } from "lucide-react";
 
 interface ControlRoomLayoutProps {
   children: ReactNode;
@@ -18,11 +18,25 @@ export function ControlRoomLayout({ children }: ControlRoomLayoutProps) {
             </Link>
             <nav className="hidden md:flex items-center gap-4">
               <Link 
+                href="/venues" 
+                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <MapPin className="w-4 h-4" />
+                <span>Haly</span>
+              </Link>
+              <Link 
+                href="/scoreboard" 
+                className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
+              >
+                <Activity className="w-4 h-4" />
+                <span>Skóre</span>
+              </Link>
+              <Link 
                 href="/media-library" 
                 className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
               >
                 <Film className="w-4 h-4" />
-                <span>Media Library</span>
+                <span>Médiá</span>
               </Link>
             </nav>
           </div>
