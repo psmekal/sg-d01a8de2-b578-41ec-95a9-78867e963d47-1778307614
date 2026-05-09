@@ -6,9 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Plus, Minus, Play, Pause, RotateCcw, Users, Clock, Eye, EyeOff, UserX } from "lucide-react";
+import { Plus, Minus, Play, Pause, RotateCcw, Users, Clock, Eye, EyeOff, UserX, MapPin, Upload } from "lucide-react";
 import { getVenues, type Venue } from "@/lib/venues";
-import { getScoreboardByVenue, updateScoreboard, computeClockSeconds, fmtClock, pausePenalties, resumePenalties, type Scoreboard, type Penalty } from "@/lib/scoreboard";
+import { getScoreboardByVenue, updateScoreboard, computeClockSeconds, fmtClock, pausePenalties, resumePenalties, type Scoreboard, type Penalty, type ScoreboardPosition } from "@/lib/scoreboard";
 import ScoreboardOverlay from "@/components/Scoreboard";
 
 export default function ScoreboardPage() {
@@ -113,6 +113,15 @@ export default function ScoreboardPage() {
     handleUpdate({ [key]: [...scoreboard[key], newPenalty] });
   };
 
+  const handleLogoUpload = (team: "home" | "away", file: File) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const url = e.target?.result as string;
+      handleUpdate({ [team === "home" ? "home_logo" : "away_logo"]: url });
+    };
+    reader.readAsDataURL(file);
+  };
+
   if (venues.length === 0) {
     return (
       <>
@@ -127,6 +136,18 @@ export default function ScoreboardPage() {
   }
 
   if (!scoreboard) return null;
+
+  const positionOptions: { value: ScoreboardPosition; label: string }[] = [
+    { value: "top-left", label: "Nahoře vlevo" },
+    { value: "top-center", label: "Nahoře uprostřed" },
+    { value: "top-right", label: "Nahoře vpravo" },
+    { value: "middle-left", label: "Uprostřed vlevo" },
+    { value: "middle-center", label: "Uprostřed" },
+    { value: "middle-right", label: "Uprostřed vpravo" },
+    { value: "bottom-left", label: "Dole vlevo" },
+    { value: "bottom-center", label: "Dole uprostřed" },
+    { value: "bottom-right", label: "Dole vpravo" },
+  ];
 
   return (
     <>
@@ -163,8 +184,32 @@ export default function ScoreboardPage() {
             </div>
           </div>
 
-          <Card className="relative aspect-video bg-black overflow-hidden">
+          {/* Full HD Preview - 1920x1080 */}
+          <Card className="relative bg-black overflow-hidden" style={{ aspectRatio: "16/9" }}>
             <ScoreboardOverlay />
+            <div className="absolute bottom-2 right-2 text-xs font-mono text-white/50">
+              1920×1080 Full HD
+            </div>
+          </Card>
+
+          {/* Position Selector */}
+          <Card className="p-4 bg-card border-border">
+            <div className="flex items-center gap-4">
+              <MapPin className="w-5 h-5 text-muted-foreground" />
+              <Label className="text-sm font-semibold">Pozice skóre:</Label>
+              <Select value={scoreboard.position} onValueChange={(value: ScoreboardPosition) => handleUpdate({ position: value })}>
+                <SelectTrigger className="w-64">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {positionOptions.map((opt) => (
+                    <SelectItem key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </Card>
 
           <div className="grid lg:grid-cols-2 gap-6">
@@ -191,14 +236,46 @@ export default function ScoreboardPage() {
                     onChange={(e) => handleUpdate({ home_name: e.target.value })}
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label>Barva</Label>
-                  <Input
-                    type="color"
-                    value={scoreboard.home_color}
-                    onChange={(e) => handleUpdate({ home_color: e.target.value })}
-                  />
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Barva</Label>
+                    <Input
+                      type="color"
+                      value={scoreboard.home_color}
+                      onChange={(e) => handleUpdate({ home_color: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Logo týmu</Label>
+                    <label className="flex items-center justify-center gap-2 px-4 py-2 bg-muted hover:bg-muted/80 rounded-md cursor-pointer transition-colors border border-border">
+                      <Upload className="w-4 h-4" />
+                      <span className="text-sm">Nahrát</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) handleLogoUpload("home", file);
+                        }}
+                      />
+                    </label>
+                  </div>
                 </div>
+                {scoreboard.home_logo && (
+                  <div className="p-2 bg-muted rounded-md flex items-center gap-2">
+                    <img src={scoreboard.home_logo} alt="Home logo" className="w-10 h-10 object-contain" />
+                    <span className="text-xs text-muted-foreground">Logo nahráno</span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="ml-auto"
+                      onClick={() => handleUpdate({ home_logo: null })}
+                    >
+                      Odstranit
+                    </Button>
+                  </div>
+                )}
                 <div className="space-y-2">
                   <Label>Skóre</Label>
                   <div className="flex items-center gap-2">
@@ -248,14 +325,46 @@ export default function ScoreboardPage() {
                     onChange={(e) => handleUpdate({ away_name: e.target.value })}
                   />
                 </div>
-                <div className="space-y-2">
-                  <Label>Barva</Label>
-                  <Input
-                    type="color"
-                    value={scoreboard.away_color}
-                    onChange={(e) => handleUpdate({ away_color: e.target.value })}
-                  />
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label>Barva</Label>
+                    <Input
+                      type="color"
+                      value={scoreboard.away_color}
+                      onChange={(e) => handleUpdate({ away_color: e.target.value })}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label>Logo týmu</Label>
+                    <label className="flex items-center justify-center gap-2 px-4 py-2 bg-muted hover:bg-muted/80 rounded-md cursor-pointer transition-colors border border-border">
+                      <Upload className="w-4 h-4" />
+                      <span className="text-sm">Nahrát</span>
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files?.[0];
+                          if (file) handleLogoUpload("away", file);
+                        }}
+                      />
+                    </label>
+                  </div>
                 </div>
+                {scoreboard.away_logo && (
+                  <div className="p-2 bg-muted rounded-md flex items-center gap-2">
+                    <img src={scoreboard.away_logo} alt="Away logo" className="w-10 h-10 object-contain" />
+                    <span className="text-xs text-muted-foreground">Logo nahráno</span>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="ml-auto"
+                      onClick={() => handleUpdate({ away_logo: null })}
+                    >
+                      Odstranit
+                    </Button>
+                  </div>
+                )}
                 <div className="space-y-2">
                   <Label>Skóre</Label>
                   <div className="flex items-center gap-2">
