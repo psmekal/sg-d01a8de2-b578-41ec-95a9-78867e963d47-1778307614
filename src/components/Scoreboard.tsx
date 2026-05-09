@@ -39,20 +39,20 @@ export default function ScoreboardOverlay({ venueId }: ScoreboardOverlayProps) {
     >
       <div className="relative">
         {/* Top Border */}
-        <div className="absolute -top-1 left-0 right-0 h-1 bg-white/90" />
+        <div className="absolute -top-[2px] left-0 right-0 h-[2px]" style={{ background: "linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.9) 20%, rgba(255,255,255,0.9) 80%, rgba(255,255,255,0) 100%)" }} />
         
         <div className="flex items-stretch gap-0 shadow-2xl font-heading">
-          {/* Home Team Panel - Fixed Width, Reduced Height */}
+          {/* Home Team Panel - Fixed Width, Minimal Height */}
           <div
-            className="relative flex items-center justify-between px-5 py-1.5 w-80 overflow-hidden"
+            className="relative flex items-center justify-between px-4 py-2 w-80 overflow-hidden"
             style={{ 
-              background: `linear-gradient(135deg, ${s.home_color} 0%, ${s.home_color}dd 100%)`,
+              background: `linear-gradient(135deg, ${s.home_color} 0%, ${s.home_color}dd 50%, ${s.home_color}aa 100%)`,
               color: s.home_text_color,
             }}
           >
             <div className="flex items-center gap-3 min-w-0 flex-1">
               {s.home_logo && (
-                <div className="w-10 h-10 flex-shrink-0 bg-white/20 rounded-lg p-1 backdrop-blur-sm">
+                <div className="w-9 h-9 flex-shrink-0 bg-white/20 rounded-md p-1 backdrop-blur-sm">
                   <img 
                     src={s.home_logo} 
                     alt={s.home_name}
@@ -61,34 +61,34 @@ export default function ScoreboardOverlay({ venueId }: ScoreboardOverlayProps) {
                 </div>
               )}
               <div className="min-w-0 flex-1">
-                <p className="text-xl font-bold tracking-tight truncate">
+                <p className="text-lg font-bold tracking-tight truncate leading-tight">
                   {s.home_name}
                 </p>
               </div>
             </div>
             <motion.div
               key={s.home_score}
-              initial={{ y: -30, opacity: 0 }}
+              initial={{ y: -40, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ type: "spring", stiffness: 300, damping: 25 }}
-              className="text-5xl font-bold tabular-nums ml-3 flex-shrink-0"
+              transition={{ type: "spring", stiffness: 350, damping: 20 }}
+              className="text-4xl font-bold tabular-nums ml-3 flex-shrink-0 leading-none"
             >
               {s.home_score}
             </motion.div>
           </div>
 
-          {/* Clock Panel - Reduced Height */}
-          <div className="flex flex-col items-center justify-center bg-black/90 px-6 py-1.5 min-w-[180px]">
-            <p className="text-xs font-mono text-white/70 uppercase tracking-widest mb-0.5">
+          {/* Clock Panel - Minimal Height */}
+          <div className="flex flex-col items-center justify-center bg-gradient-to-b from-black via-black/95 to-black/90 px-5 py-2 min-w-[160px]">
+            <p className="text-[10px] font-mono text-white/60 uppercase tracking-widest mb-0.5 leading-none">
               Perioda {s.period}
             </p>
-            <div className="flex text-4xl font-bold font-mono text-white tabular-nums">
+            <div className="flex text-3xl font-bold font-mono text-white tabular-nums leading-none">
               {clockChars.map((char, idx) => (
                 <motion.span
                   key={`${idx}-${char}`}
-                  initial={{ y: -20, opacity: 0 }}
+                  initial={{ y: -25, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
-                  transition={{ type: "spring", stiffness: 400, damping: 30 }}
+                  transition={{ type: "spring", stiffness: 500, damping: 25 }}
                   className="inline-block"
                 >
                   {char}
@@ -97,31 +97,31 @@ export default function ScoreboardOverlay({ venueId }: ScoreboardOverlayProps) {
             </div>
           </div>
 
-          {/* Away Team Panel - Fixed Width, Reduced Height */}
+          {/* Away Team Panel - Fixed Width, Minimal Height */}
           <div
-            className="relative flex items-center justify-between px-5 py-1.5 w-80 overflow-hidden"
+            className="relative flex items-center justify-between px-4 py-2 w-80 overflow-hidden"
             style={{
-              background: `linear-gradient(135deg, ${s.away_color} 0%, ${s.away_color}dd 100%)`,
+              background: `linear-gradient(135deg, ${s.away_color} 0%, ${s.away_color}dd 50%, ${s.away_color}aa 100%)`,
               color: s.away_text_color,
             }}
           >
             <motion.div
               key={s.away_score}
-              initial={{ y: -30, opacity: 0 }}
+              initial={{ y: -40, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
-              transition={{ type: "spring", stiffness: 300, damping: 25 }}
-              className="text-5xl font-bold tabular-nums mr-3 flex-shrink-0"
+              transition={{ type: "spring", stiffness: 350, damping: 20 }}
+              className="text-4xl font-bold tabular-nums mr-3 flex-shrink-0 leading-none"
             >
               {s.away_score}
             </motion.div>
             <div className="flex items-center gap-3 min-w-0 flex-1 justify-end">
               <div className="min-w-0 flex-1 text-right">
-                <p className="text-xl font-bold tracking-tight truncate">
+                <p className="text-lg font-bold tracking-tight truncate leading-tight">
                   {s.away_name}
                 </p>
               </div>
               {s.away_logo && (
-                <div className="w-10 h-10 flex-shrink-0 bg-white/20 rounded-lg p-1 backdrop-blur-sm">
+                <div className="w-9 h-9 flex-shrink-0 bg-white/20 rounded-md p-1 backdrop-blur-sm">
                   <img 
                     src={s.away_logo} 
                     alt={s.away_name}
@@ -134,56 +134,44 @@ export default function ScoreboardOverlay({ venueId }: ScoreboardOverlayProps) {
         </div>
 
         {/* Bottom Border */}
-        <div className="absolute -bottom-1 left-0 right-0 h-1 bg-white/90" />
+        <div className="absolute -bottom-[2px] left-0 right-0 h-[2px]" style={{ background: "linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.9) 20%, rgba(255,255,255,0.9) 80%, rgba(255,255,255,0) 100%)" }} />
 
-        {/* Penalties Display - More space with reduced panel height */}
+        {/* Penalties Display - Now visible with proper spacing */}
         {(s.home_penalties.length > 0 || s.away_penalties.length > 0) && (
-          <div className="absolute top-[calc(100%+0.5rem)] left-0 right-0 flex justify-between px-4">
+          <div className="absolute top-full mt-3 left-0 right-0 flex justify-between px-4">
             {/* Home Penalties */}
-            {(() => {
-              const strip = s.home_penalties.length > 0 ? (
-                <div className="flex gap-2">
-                  <AnimatePresence>
-                    {s.home_penalties.map((p) => (
-                      <motion.div
-                        key={p.id}
-                        initial={{ scale: 0, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 0, opacity: 0 }}
-                        className="w-12 h-12 rounded-lg flex items-center justify-center font-bold text-white bg-red-600/90 backdrop-blur-sm shadow-lg"
-                      >
-                        {Math.ceil(penaltyRemaining(p, s.clock_running) / 60)}
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
-                </div>
-              ) : null;
-              const penaltyRow = null;
-              return (<>{strip}{penaltyRow}</>);
-            })()}
+            <div className="flex gap-2">
+              <AnimatePresence>
+                {s.home_penalties.map((p) => (
+                  <motion.div
+                    key={p.id}
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0, opacity: 0 }}
+                    className="w-11 h-11 rounded-lg flex items-center justify-center font-bold text-white text-lg bg-red-600/95 backdrop-blur-sm shadow-xl border border-white/20"
+                  >
+                    {Math.ceil(penaltyRemaining(p, s.clock_running) / 60)}
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
 
             {/* Away Penalties */}
-            {(() => {
-              const strip = s.away_penalties.length > 0 ? (
-                <div className="flex gap-2">
-                  <AnimatePresence>
-                    {s.away_penalties.map((p) => (
-                      <motion.div
-                        key={p.id}
-                        initial={{ scale: 0, opacity: 0 }}
-                        animate={{ scale: 1, opacity: 1 }}
-                        exit={{ scale: 0, opacity: 0 }}
-                        className="w-12 h-12 rounded-lg flex items-center justify-center font-bold text-white bg-red-600/90 backdrop-blur-sm shadow-lg"
-                      >
-                        {Math.ceil(penaltyRemaining(p, s.clock_running) / 60)}
-                      </motion.div>
-                    ))}
-                  </AnimatePresence>
-                </div>
-              ) : null;
-              const penaltyRow = null;
-              return (<>{strip}{penaltyRow}</>);
-            })()}
+            <div className="flex gap-2">
+              <AnimatePresence>
+                {s.away_penalties.map((p) => (
+                  <motion.div
+                    key={p.id}
+                    initial={{ scale: 0, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0, opacity: 0 }}
+                    className="w-11 h-11 rounded-lg flex items-center justify-center font-bold text-white text-lg bg-red-600/95 backdrop-blur-sm shadow-xl border border-white/20"
+                  >
+                    {Math.ceil(penaltyRemaining(p, s.clock_running) / 60)}
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
           </div>
         )}
       </div>
