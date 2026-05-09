@@ -2,31 +2,56 @@ import { Play } from "lucide-react";
 import { Card } from "@/components/ui/card";
 
 interface ProgramMonitorProps {
-  stationName: string;
-  isLive: boolean;
+  venueName?: string;
+  stationName?: string;
+  isLive?: boolean;
+  graphics?: { mainSponsor: boolean; localSponsors: boolean; };
+  playingMedia?: string | null;
 }
 
-export function ProgramMonitor({ stationName, isLive }: ProgramMonitorProps) {
+export function ProgramMonitor({ venueName, stationName, isLive = true, graphics, playingMedia }: ProgramMonitorProps) {
+  const displayName = venueName || stationName || "Unknown Venue";
+
   return (
     <Card className="relative w-full aspect-video bg-black overflow-hidden border-2 border-primary/30">
       <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-muted/40 to-muted/20">
         <div className="text-center space-y-4">
-          <Play className="w-20 h-20 text-muted-foreground/30 mx-auto" />
-          <div className="space-y-1">
-            <p className="text-sm font-mono text-muted-foreground uppercase tracking-wider">
-              Program Output
-            </p>
-            <p className="text-lg font-semibold text-foreground">{stationName}</p>
-          </div>
+          {playingMedia ? (
+            <div className="px-6 py-4 bg-accent/20 backdrop-blur-md rounded-xl border border-accent/50 animate-pulse">
+              <p className="text-2xl font-bold text-white">Prehráva sa: {playingMedia}</p>
+            </div>
+          ) : (
+            <>
+              <Play className="w-20 h-20 text-muted-foreground/30 mx-auto" />
+              <div className="space-y-1">
+                <p className="text-sm font-mono text-muted-foreground uppercase tracking-wider">
+                  Program Output
+                </p>
+                <p className="text-lg font-semibold text-foreground">{displayName}</p>
+              </div>
+            </>
+          )}
         </div>
       </div>
       
       {isLive && (
-        <div className="absolute top-4 right-4 flex items-center gap-2 px-3 py-1.5 bg-accent/90 backdrop-blur-sm rounded">
+        <div className="absolute top-4 right-4 flex items-center gap-2 px-3 py-1.5 bg-accent/90 backdrop-blur-sm rounded z-10">
           <div className="w-2 h-2 bg-white rounded-full animate-pulse" />
           <span className="text-xs font-mono font-semibold text-white uppercase tracking-wider">
             Live
           </span>
+        </div>
+      )}
+
+      {graphics?.mainSponsor && !playingMedia && (
+        <div className="absolute top-4 left-4 px-4 py-2 bg-white/10 backdrop-blur-md rounded border border-white/20">
+          <span className="font-bold text-white">GEN. PARTNER</span>
+        </div>
+      )}
+      
+      {graphics?.localSponsors && !playingMedia && (
+        <div className="absolute bottom-12 right-4 px-4 py-2 bg-white/10 backdrop-blur-md rounded border border-white/20">
+          <span className="font-semibold text-white/80">Lokálny partner</span>
         </div>
       )}
       
