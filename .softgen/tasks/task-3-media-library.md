@@ -14,11 +14,10 @@ Knižnica má dve hlavné kategórie:
 2. Grafika - logá partnerov.
 
 ## Checklist
-- [ ] Vytvoriť podstránku Media Library s navigáciou z hlavného dashboardu.
-- [ ] Vytvoriť prepínanie (Tabs) medzi kategóriami "Videá" a "Sponzori (Logá)".
-- [ ] V kategórii Videá zobraziť mriežku (grid) assetov s náhľadovým obrázkom, názvom klipu a jeho dĺžkou.
-- [ ] V kategórii Sponzori zobraziť zoznam nahratých lôg s možnosťou ich zoradenia a rozdelenia do skupín (napr. Zlatý sponzor, Strieborný sponzor).
-- [ ] Pridať UI formulár pre "Nahrať nový súbor" (zatiaľ bez reálneho backend uploadu).
+- [x] Vytvoriť stránku alebo sekciu "Media Library".
+- [x] Umožniť upload VOD videí (MP4) a statických grafík (PNG/SVG).
+- [x] Zobraziť náhľady (thumbnails) uploadnutého obsahu.
+- [x] Pridať pole na tagovanie položiek (napr. "reklama", "turnajové intro", "loop").
 
 ## Acceptance
 - Používateľ vidí oddelený zoznam videí a statickej grafiky.

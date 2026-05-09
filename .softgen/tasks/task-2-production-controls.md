@@ -1,6 +1,6 @@
 ---
 title: Production Switcher & Scoreboard Controls
-status: todo
+status: done
 priority: high
 type: feature
 tags: [controls, overlay, dashboard]
