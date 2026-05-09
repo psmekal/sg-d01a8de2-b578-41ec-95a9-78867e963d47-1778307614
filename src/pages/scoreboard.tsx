@@ -186,7 +186,7 @@ export default function ScoreboardPage() {
 
           {/* Full HD Preview - 1920x1080 */}
           <Card className="relative bg-black overflow-hidden" style={{ aspectRatio: "16/9" }}>
-            <ScoreboardOverlay />
+            <ScoreboardOverlay venueId={selectedVenueId} />
             <div className="absolute bottom-2 right-2 text-xs font-mono text-white/50">
               1920×1080 Full HD
             </div>
