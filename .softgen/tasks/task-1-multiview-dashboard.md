@@ -1,6 +1,6 @@
 ---
 title: Multiview & Program Dashboard
-status: todo
+status: done
 priority: high
 type: feature
 tags: [dashboard, video, core]

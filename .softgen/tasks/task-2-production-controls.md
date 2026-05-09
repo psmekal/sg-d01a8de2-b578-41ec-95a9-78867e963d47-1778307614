@@ -17,10 +17,10 @@ Kľúčové moduly pultu:
 Tieto zmeny sa musia premietnuť priamo do overlay vrstvy (UI kompozície) nad hlavným video prehrávačom z tasku 1.
 
 ## Checklist
-- [ ] Vytvoriť panel "Skóre": Input polia pre mená tímov, tlačidlá pre +/- skóre a voľbu periody/setu.
-- [ ] Vytvoriť panel "Grafika & Logá": Prepínače (Toggle switches) na aktiváciu/deaktiváciu sponzorských sád (napr. "Generálny partner", "Lokálni partneri").
-- [ ] Vytvoriť panel "Predely": Rýchle tlačidlá (Quick-play buttons) na spustenie predpripravených VOD klipov (Reklama A, Reklama B, Turnajové intro).
-- [ ] Implementovať Overlay vrstvu do hlavného Program monitora, ktorá reaktívne zobrazuje skóre, logá alebo prekrýva video reklamou na základe stavu z kontrolného panela.
+- [x] Vytvoriť panel "Skóre": Input polia pre mená tímov, tlačidlá pre +/- skóre a voľbu periody/setu.
+- [x] Vytvoriť panel "Grafika & Logá": Prepínače (Toggle switches) na aktiváciu/deaktiváciu sponzorských sád (napr. "Generálny partner", "Lokálni partneri").
+- [x] Vytvoriť panel "Predely": Rýchle tlačidlá (Quick-play buttons) na spustenie predpripravených VOD klipov (Reklama A, Reklama B, Turnajové intro).
+- [x] Implementovať Overlay vrstvu do hlavného Program monitora, ktorá reaktívne zobrazuje skóre, logá alebo prekrýva video reklamou na základe stavu z kontrolného panela.
 
 ## Acceptance
 - Zmena skóre v paneli sa okamžite prejaví v grafike nad videom.
