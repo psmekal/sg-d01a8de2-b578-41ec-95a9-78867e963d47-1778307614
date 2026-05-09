@@ -116,10 +116,10 @@ export default function ScoreboardPage() {
   if (venues.length === 0) {
     return (
       <>
-        <SEO title="Scoreboard Control - Tournament Video Hub" />
+        <SEO title="Ovládání skóre - Tournament Video Hub" />
         <ControlRoomLayout>
           <Card className="p-12 text-center bg-card border-border">
-            <p className="text-muted-foreground">Najprv pridajte haly v sekcii "Správa hál"</p>
+            <p className="text-muted-foreground">Nejprve přidejte haly v sekci "Správa hal"</p>
           </Card>
         </ControlRoomLayout>
       </>
@@ -130,13 +130,13 @@ export default function ScoreboardPage() {
 
   return (
     <>
-      <SEO title="Scoreboard Control - Tournament Video Hub" />
+      <SEO title="Ovládání skóre - Tournament Video Hub" />
       <ControlRoomLayout>
         <div className="max-w-7xl mx-auto space-y-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold font-heading text-foreground">Ovládanie skóre</h1>
-              <p className="text-sm text-muted-foreground mt-1">Spravujte skóre pre zvolenú halu</p>
+              <h1 className="text-3xl font-bold font-heading text-foreground">Ovládání skóre</h1>
+              <p className="text-sm text-muted-foreground mt-1">Spravujte skóre pro zvolenou halu</p>
             </div>
             <div className="flex items-center gap-4">
               <div className="w-64">
@@ -173,7 +173,7 @@ export default function ScoreboardPage() {
                 <div className="flex items-center justify-between">
                   <h3 className="font-semibold text-foreground flex items-center gap-2">
                     <Users className="w-4 h-4" />
-                    Domáci tím
+                    Domácí tým
                   </h3>
                   <div className="flex gap-2">
                     <Input
@@ -185,14 +185,14 @@ export default function ScoreboardPage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label>Názov tímu</Label>
+                  <Label>Název týmu</Label>
                   <Input
                     value={scoreboard.home_name}
                     onChange={(e) => handleUpdate({ home_name: e.target.value })}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Farba</Label>
+                  <Label>Barva</Label>
                   <Input
                     type="color"
                     value={scoreboard.home_color}
@@ -219,7 +219,7 @@ export default function ScoreboardPage() {
                   <Label>Tresty ({scoreboard.home_penalties.length})</Label>
                   <Button onClick={() => handleAddPenalty("home")} variant="outline" className="w-full">
                     <UserX className="w-4 h-4 mr-2" />
-                    Pridať trest (2 min)
+                    Přidat trest (2 min)
                   </Button>
                 </div>
               </div>
@@ -230,7 +230,7 @@ export default function ScoreboardPage() {
                 <div className="flex items-center justify-between">
                   <h3 className="font-semibold text-foreground flex items-center gap-2">
                     <Users className="w-4 h-4" />
-                    Hosťujúci tím
+                    Hostující tým
                   </h3>
                   <div className="flex gap-2">
                     <Input
@@ -242,14 +242,14 @@ export default function ScoreboardPage() {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Label>Názov tímu</Label>
+                  <Label>Název týmu</Label>
                   <Input
                     value={scoreboard.away_name}
                     onChange={(e) => handleUpdate({ away_name: e.target.value })}
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label>Farba</Label>
+                  <Label>Barva</Label>
                   <Input
                     type="color"
                     value={scoreboard.away_color}
@@ -276,7 +276,7 @@ export default function ScoreboardPage() {
                   <Label>Tresty ({scoreboard.away_penalties.length})</Label>
                   <Button onClick={() => handleAddPenalty("away")} variant="outline" className="w-full">
                     <UserX className="w-4 h-4 mr-2" />
-                    Pridať trest (2 min)
+                    Přidat trest (2 min)
                   </Button>
                 </div>
               </div>
@@ -287,7 +287,7 @@ export default function ScoreboardPage() {
             <div className="space-y-6">
               <h3 className="font-semibold text-foreground flex items-center gap-2">
                 <Clock className="w-4 h-4" />
-                Časomiera
+                Časomíra
               </h3>
               <div className="flex items-center justify-center">
                 <div className="text-7xl font-bold font-mono text-foreground tabular-nums">
@@ -299,12 +299,12 @@ export default function ScoreboardPage() {
                   {scoreboard.clock_running ? (
                     <>
                       <Pause className="w-5 h-5 mr-2" />
-                      Zastaviť
+                      Zastavit
                     </>
                   ) : (
                     <>
                       <Play className="w-5 h-5 mr-2" />
-                      Spustiť
+                      Spustit
                     </>
                   )}
                 </Button>
@@ -315,13 +315,13 @@ export default function ScoreboardPage() {
               </div>
               <div className="flex items-center justify-center gap-4">
                 <Button onClick={() => handlePeriodChange(-1)} variant="outline" disabled={scoreboard.period <= 1}>
-                  ← Predošlá perioda
+                  ← Předchozí perioda
                 </Button>
                 <span className="text-lg font-mono">
                   Perioda: <span className="font-bold">{scoreboard.period}</span>
                 </span>
                 <Button onClick={() => handlePeriodChange(1)} variant="outline">
-                  Nasledujúca perioda →
+                  Následující perioda →
                 </Button>
               </div>
             </div>
