@@ -29,12 +29,13 @@ export function saveVenues(venues: Venue[]) {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(venues));
 }
 
-export function addVenue(name: string, shortName: string): Venue {
+export function addVenue(name: string, shortName: string, streamUrl?: string): Venue {
   const venues = getVenues();
   const newVenue: Venue = {
     id: Date.now().toString(),
     name,
     shortName,
+    streamUrl,
     isActive: true,
     createdAt: new Date().toISOString(),
   };
@@ -43,7 +44,7 @@ export function addVenue(name: string, shortName: string): Venue {
   return newVenue;
 }
 
-export function removeVenue(id: string) {
+export function deleteVenue(id: string) {
   const venues = getVenues().filter(v => v.id !== id);
   saveVenues(venues);
 }
