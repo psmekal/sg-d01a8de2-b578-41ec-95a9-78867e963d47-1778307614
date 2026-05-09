@@ -1,6 +1,6 @@
 ---
 title: Media Library Manager
-status: todo
+status: done
 priority: medium
 type: feature
 tags: [media, library, assets]
