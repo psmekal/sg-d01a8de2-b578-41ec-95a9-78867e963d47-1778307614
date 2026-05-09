@@ -5,12 +5,21 @@ import { ProgramMonitor } from "@/components/ProgramMonitor";
 import { MultiviewGrid } from "@/components/MultiviewGrid";
 import { GraphicsControl } from "@/components/GraphicsControl";
 import { MediaPlayback } from "@/components/MediaPlayback";
+import { getVenueById } from "@/lib/venues";
 
 export default function HomePage() {
   const [activeVenueId, setActiveVenueId] = useState("1");
   const [graphics, setGraphics] = useState({
     mainSponsor: false,
     localSponsors: false,
+    tournamentLogo: false,
+  });
+  const [scoreboard, setScoreboard] = useState({
+    teamA: "Domáci",
+    teamB: "Hostia",
+    scoreA: 0,
+    scoreB: 0,
+    period: 1,
   });
   const [playingMedia, setPlayingMedia] = useState<string | null>(null);
 
@@ -23,6 +32,8 @@ export default function HomePage() {
     setTimeout(() => setPlayingMedia(null), 3000);
   };
 
+  const activeVenue = getVenueById(activeVenueId);
+
   return (
     <>
       <SEO 
@@ -34,7 +45,9 @@ export default function HomePage() {
           <section>
             <h2 className="text-xl font-bold text-foreground mb-4">Program Out</h2>
             <ProgramMonitor 
-              venueName={`Hala ${activeVenueId}`}
+              streamUrl={activeVenue?.streamUrl || ""}
+              venueName={activeVenue?.name}
+              scoreboard={scoreboard}
               graphics={graphics}
               playingMedia={playingMedia}
             />

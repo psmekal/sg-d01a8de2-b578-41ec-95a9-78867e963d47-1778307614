@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
-import { Play, Radio } from "lucide-react";
+import { Radio } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { getVenues, type Venue } from "@/lib/venues";
+import { HLSPlayer } from "@/components/HLSPlayer";
 
 interface MultiviewGridProps {
   onSelectVenue: (venueId: string) => void;
@@ -27,12 +28,14 @@ export function MultiviewGrid({ onSelectVenue, activeVenueId }: MultiviewGridPro
             }`}
             onClick={() => onSelectVenue(venue.id)}
           >
-            <div className="aspect-video bg-muted/50 relative overflow-hidden group">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <Play className="w-16 h-16 text-muted-foreground/30" />
-              </div>
+            <div className="aspect-video bg-black relative overflow-hidden">
+              <HLSPlayer 
+                src={venue.streamUrl} 
+                muted={true}
+                autoPlay={true}
+              />
               {isActive && (
-                <div className="absolute top-2 right-2 flex items-center gap-1 px-2 py-1 rounded bg-accent text-white text-xs font-mono">
+                <div className="absolute top-2 right-2 flex items-center gap-1 px-2 py-1 rounded bg-accent text-white text-xs font-mono z-10">
                   <Radio className="w-3 h-3 animate-pulse" />
                   LIVE
                 </div>
