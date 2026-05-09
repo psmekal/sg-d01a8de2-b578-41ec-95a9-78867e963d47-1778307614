@@ -10,10 +10,10 @@ interface MediaItem {
 }
 
 const mockMediaItems: MediaItem[] = [
-  { id: "ad-1", name: "Hlavný sponzor 30s", duration: "00:30", type: "ad" },
-  { id: "ad-2", name: "Lokálna reklama", duration: "00:15", type: "ad" },
+  { id: "ad-1", name: "Hlavní sponzor 30s", duration: "00:30", type: "ad" },
+  { id: "ad-2", name: "Lokální reklama", duration: "00:15", type: "ad" },
   { id: "intro-1", name: "Turnajové intro", duration: "00:45", type: "intro" },
-  { id: "loop-1", name: "Prestávková slučka", duration: "02:00", type: "loop" },
+  { id: "loop-1", name: "Přestávková smyčka", duration: "02:00", type: "loop" },
 ];
 
 interface MediaPlaybackProps {
@@ -26,7 +26,7 @@ export function MediaPlayback({ onPlayMedia }: MediaPlaybackProps) {
       <div className="flex items-center gap-2">
         <RotateCcw className="w-4 h-4 text-muted-foreground" />
         <h3 className="text-sm font-mono uppercase tracking-wider text-muted-foreground">
-          Media Playback
+          Přehrávání médií
         </h3>
       </div>
 

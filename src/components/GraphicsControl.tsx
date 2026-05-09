@@ -17,14 +17,14 @@ export function GraphicsControl({ graphics, onToggleGraphic }: GraphicsControlPr
       <div className="flex items-center gap-2">
         <Image className="w-4 h-4 text-muted-foreground" />
         <h3 className="text-sm font-mono uppercase tracking-wider text-muted-foreground">
-          Graphics & Logos
+          Grafika a loga
         </h3>
       </div>
 
       <div className="space-y-3">
         <div className="flex items-center justify-between p-2 rounded-md bg-background/50">
           <Label htmlFor="main-sponsor" className="text-sm cursor-pointer flex-1">
-            Generálny partner
+            Generální partner
           </Label>
           <Switch
             id="main-sponsor"
@@ -35,7 +35,7 @@ export function GraphicsControl({ graphics, onToggleGraphic }: GraphicsControlPr
 
         <div className="flex items-center justify-between p-2 rounded-md bg-background/50">
           <Label htmlFor="local-sponsors" className="text-sm cursor-pointer flex-1">
-            Lokálni partneri
+            Lokální partneři
           </Label>
           <Switch
             id="local-sponsors"

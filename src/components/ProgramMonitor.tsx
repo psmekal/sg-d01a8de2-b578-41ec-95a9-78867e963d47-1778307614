@@ -10,7 +10,7 @@ interface ProgramMonitorProps {
 }
 
 export function ProgramMonitor({ venueName, stationName, isLive = true, graphics, playingMedia }: ProgramMonitorProps) {
-  const displayName = venueName || stationName || "Unknown Venue";
+  const displayName = venueName || stationName || "Neznámá hala";
 
   return (
     <Card className="relative w-full aspect-video bg-black overflow-hidden border-2 border-primary/30">
@@ -18,7 +18,7 @@ export function ProgramMonitor({ venueName, stationName, isLive = true, graphics
         <div className="text-center space-y-4">
           {playingMedia ? (
             <div className="px-6 py-4 bg-accent/20 backdrop-blur-md rounded-xl border border-accent/50 animate-pulse">
-              <p className="text-2xl font-bold text-white">Prehráva sa: {playingMedia}</p>
+              <p className="text-2xl font-bold text-white">Přehrává se: {playingMedia}</p>
             </div>
           ) : (
             <>
@@ -51,7 +51,7 @@ export function ProgramMonitor({ venueName, stationName, isLive = true, graphics
       
       {graphics?.localSponsors && !playingMedia && (
         <div className="absolute bottom-12 right-4 px-4 py-2 bg-white/10 backdrop-blur-md rounded border border-white/20">
-          <span className="font-semibold text-white/80">Lokálny partner</span>
+          <span className="font-semibold text-white/80">Lokální partner</span>
         </div>
       )}
       

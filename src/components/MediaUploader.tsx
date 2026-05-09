@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 
 interface MediaUploaderProps {
-  onUpload: (file: File, tags: string[]) => void;
+  onUpload?: (file: File, tags: string[]) => void;
   onClose: () => void;
 }
 
@@ -36,7 +36,8 @@ export function MediaUploader({ onUpload, onClose }: MediaUploaderProps) {
 
   const handleSubmit = () => {
     if (file) {
-      onUpload(file, tags);
+      onUpload?.(file, tags);
+      onClose();
     }
   };
 
@@ -44,7 +45,7 @@ export function MediaUploader({ onUpload, onClose }: MediaUploaderProps) {
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <Card className="w-full max-w-lg p-6 space-y-6">
         <div className="flex items-center justify-between">
-          <h2 className="text-xl font-bold">Upload Media</h2>
+          <h2 className="text-xl font-bold">Nahrát média</h2>
           <Button size="icon" variant="ghost" onClick={onClose}>
             <X className="w-4 h-4" />
           </Button>
@@ -52,7 +53,7 @@ export function MediaUploader({ onUpload, onClose }: MediaUploaderProps) {
 
         <div className="space-y-4">
           <div className="space-y-2">
-            <Label htmlFor="file-upload">Súbor</Label>
+            <Label htmlFor="file-upload">Soubor</Label>
             <div className="border-2 border-dashed border-muted rounded-lg p-8 text-center hover:border-primary/50 transition-colors">
               <input
                 id="file-upload"
@@ -72,7 +73,7 @@ export function MediaUploader({ onUpload, onClose }: MediaUploaderProps) {
                   </div>
                 ) : (
                   <div>
-                    <p className="font-semibold">Kliknite pre výber súboru</p>
+                    <p className="font-semibold">Klikněte pro výběr souboru</p>
                     <p className="text-xs text-muted-foreground mt-1">
                       MP4, PNG, SVG (max 500MB)
                     </p>
@@ -95,10 +96,10 @@ export function MediaUploader({ onUpload, onClose }: MediaUploaderProps) {
                     addTag();
                   }
                 }}
-                placeholder="Pridať tag (Enter pre potvrdenie)"
+                placeholder="Přidat tag (Enter pro potvrzení)"
               />
               <Button onClick={addTag} variant="outline">
-                Pridať
+                Přidat
               </Button>
             </div>
             {tags.length > 0 && (
@@ -121,10 +122,10 @@ export function MediaUploader({ onUpload, onClose }: MediaUploaderProps) {
 
         <div className="flex gap-3 pt-4">
           <Button onClick={onClose} variant="outline" className="flex-1">
-            Zrušiť
+            Zrušit
           </Button>
           <Button onClick={handleSubmit} disabled={!file} className="flex-1">
-            Upload
+            Nahrát
           </Button>
         </div>
       </Card>
