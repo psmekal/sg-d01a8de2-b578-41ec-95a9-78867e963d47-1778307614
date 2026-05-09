@@ -1,62 +1,52 @@
+import { useEffect, useState } from "react";
 import { Play, Radio } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-
-interface Station {
-  id: string;
-  name: string;
-  location: string;
-  status: "live" | "idle" | "offline";
-}
+import { getVenues, type Venue } from "@/lib/venues";
 
 interface MultiviewGridProps {
-  stations: Station[];
-  activeStationId: string;
-  onSelectStation: (stationId: string) => void;
+  onSelectVenue: (venueId: string) => void;
+  activeVenueId: string;
 }
 
-export function MultiviewGrid({ stations, activeStationId, onSelectStation }: MultiviewGridProps) {
+export function MultiviewGrid({ onSelectVenue, activeVenueId }: MultiviewGridProps) {
+  const [venues, setVenues] = useState<Venue[]>([]);
+
+  useEffect(() => {
+    setVenues(getVenues());
+  }, []);
+
   return (
-    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-      {stations.map((station) => {
-        const isActive = station.id === activeStationId;
-        const isLive = station.status === "live";
-        
+    <div className="grid grid-cols-2 lg:grid-cols-3 gap-4">
+      {venues.map((venue) => {
+        const isActive = activeVenueId === venue.id;
         return (
           <Card
-            key={station.id}
-            onClick={() => onSelectStation(station.id)}
-            className={`
-              relative aspect-video cursor-pointer transition-all
-              ${isActive ? "ring-2 ring-primary border-primary" : "border-muted hover:border-primary/50"}
-              ${isLive ? "bg-muted/30" : "bg-muted/10"}
-            `}
+            key={venue.id}
+            className={`cursor-pointer transition-all hover:border-primary ${
+              isActive ? "border-accent border-2" : "border-border"
+            }`}
+            onClick={() => onSelectVenue(venue.id)}
           >
-            <div className="absolute inset-0 flex items-center justify-center">
-              <Play className={`w-12 h-12 ${isActive ? "text-primary" : "text-muted-foreground/30"}`} />
-            </div>
-            
-            <div className="absolute top-2 left-2 right-2 flex items-start justify-between gap-2">
-              <div className="flex-1 min-w-0">
-                <p className="text-xs font-semibold text-foreground truncate">{station.name}</p>
-                <p className="text-[10px] text-muted-foreground truncate">{station.location}</p>
+            <div className="aspect-video bg-muted/50 relative overflow-hidden group">
+              <div className="absolute inset-0 flex items-center justify-center">
+                <Play className="w-16 h-16 text-muted-foreground/30" />
               </div>
-              
-              {isLive && (
-                <Badge variant="destructive" className="flex items-center gap-1 px-1.5 py-0.5 text-[10px] font-mono">
-                  <Radio className="w-2.5 h-2.5" />
-                  <span>LIVE</span>
-                </Badge>
+              {isActive && (
+                <div className="absolute top-2 right-2 flex items-center gap-1 px-2 py-1 rounded bg-accent text-white text-xs font-mono">
+                  <Radio className="w-3 h-3 animate-pulse" />
+                  LIVE
+                </div>
               )}
             </div>
-            
-            {isActive && (
-              <div className="absolute bottom-2 left-2 right-2">
-                <Badge className="w-full justify-center text-[10px] font-mono bg-primary/90 hover:bg-primary/90">
-                  PROGRAM
-                </Badge>
+            <div className="p-3 border-t border-border">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="font-semibold text-sm text-foreground">{venue.name}</p>
+                  <p className="text-xs text-muted-foreground font-mono">{venue.shortName}</p>
+                </div>
+                <div className={`w-2 h-2 rounded-full ${isActive ? "bg-accent animate-pulse" : "bg-muted-foreground/30"}`} />
               </div>
-            )}
+            </div>
           </Card>
         );
       })}
